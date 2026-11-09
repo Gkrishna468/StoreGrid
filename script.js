@@ -109,38 +109,83 @@
     })
   );
 
-  /* ---------- enquiry form ---------- */
+  /* ---------- live enquiry form submission ---------- */
   const form = document.getElementById("leadForm");
   const success = document.getElementById("formSuccess");
-  form?.addEventListener("submit", (e) => {
-    e.preventDefault();
+  const submitButton = form?.querySelector('button[type="submit"]');
 
-    // lightweight inline validation
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
     let valid = true;
     form.querySelectorAll("input[required], select[required]").forEach((field) => {
       const bad = !field.checkValidity();
       field.classList.toggle("error", bad);
       if (bad) valid = false;
     });
+
     if (!valid) {
       form.querySelector(".error")?.focus();
+      success.style.display = "block";
+      success.textContent = "Please check the required fields and try again.";
       return;
     }
 
-    const data = Object.fromEntries(new FormData(form).entries());
+    const formData = new FormData(form);
+    const payload = {
+      name: String(formData.get("name") || "").trim(),
+      phone: String(formData.get("phone") || "").trim(),
+      email: String(formData.get("email") || "").trim(),
+      category: String(formData.get("category") || "").trim(),
+      area: String(formData.get("area") || "").trim(),
+      duration: String(formData.get("duration") || "").trim(),
+      message: String(formData.get("message") || "").trim(),
+      consent: formData.get("consent") === "yes",
+      website: String(formData.get("website") || "").trim()
+    };
+
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.dataset.originalText = submitButton.innerHTML;
+      submitButton.textContent = "Submitting...";
+    }
     success.style.display = "block";
-    success.textContent =
-      "Thanks, " + data.name + ". Your " + data.category.toLowerCase() +
-      " enquiry has been prepared. This demo does not transmit or store your details yet — connect a secure backend or CRM before accepting live enquiries.";
-    form.reset();
-    success.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    success.textContent = "Submitting your enquiry securely...";
+
+    try {
+      const response = await fetch("/api/enquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || "We couldn't submit your enquiry. Please try again.");
+      }
+
+      const customerName = payload.name;
+      form.reset();
+      success.textContent =
+        `Thank you, ${customerName}. Your enquiry has been received. Our team will contact you soon.`;
+      success.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    } catch (error) {
+      success.textContent = error.message || "Submission failed. Please try again.";
+    } finally {
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.innerHTML = submitButton.dataset.originalText || "Submit enquiry";
+      }
+    }
   });
 
-  // clear error styling as the user types
-  form?.querySelectorAll("input, select").forEach((field) =>
-    field.addEventListener("input", () => field.classList.remove("error"))
-  );
+  // Clear error styling as the user edits fields.
+  form?.querySelectorAll("input, select, textarea").forEach((field) => {
+    field.addEventListener("input", () => field.classList.remove("error"));
+    field.addEventListener("change", () => field.classList.remove("error"));
+  });
 
   /* ---------- footer year ---------- */
-  document.getElementById("year").textContent = new Date().getFullYear();
+  const year = document.getElementById("year");
+  if (year) year.textContent = new Date().getFullYear();
 })();
