@@ -1,0 +1,9 @@
+In index.html, replace the existing consent checkbox line:
+
+<label class="consent"><input type="checkbox" required> <span>I agree to be contacted about this enquiry and understand this is a pre-launch interest form.</span></label>
+
+with this exact line:
+
+<label class="consent"><input type="checkbox" name="consent" value="yes" required> <span>I agree to be contacted about this enquiry and understand this is a pre-launch interest form.</span></label>
+
+This is the immediate cause of the HTTP 400: script.js looks for formData.get('consent') === 'yes', but the current checkbox has no name or value.

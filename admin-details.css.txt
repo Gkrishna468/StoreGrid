@@ -1,0 +1,7 @@
+/* Complete enquiry details inside the private admin inbox */
+.enquiry-details { margin-top: 9px; font-size: 12px; }
+.enquiry-details summary { cursor: pointer; color: #527d25; font-weight: 700; padding: 5px 0; }
+.enquiry-details dl { display: grid; grid-template-columns: minmax(105px, 150px) minmax(150px, 1fr); gap: 6px 12px; padding: 12px; margin: 8px 0; background: #f5f8ef; border-radius: 8px; white-space: normal; }
+.enquiry-details dt { color: #68756b; font-weight: 600; }
+.enquiry-details dd { margin: 0; color: #172b22; overflow-wrap: anywhere; }
+.enquiry-details .detail-message { white-space: pre-wrap; }
