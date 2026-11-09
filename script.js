@@ -160,7 +160,7 @@
       });
 
       const result = await response.json().catch(() => ({}));
-      if (!response.ok || !result.success) {
+      if (!response.ok || !(result.ok === true || result.success === true)) {
         throw new Error(result.error || "We couldn't submit your enquiry. Please try again.");
       }
 
