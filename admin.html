@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="referrer" content="same-origin">
+  <title>StoreGrid | Private Admin</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar"><a class="brand" href="/">store<span>grid</span></a><span>Private enquiry management</span></header>
+    <section id="loginPanel" class="panel login-panel">
+      <p class="eyebrow">AUTHORISED ACCESS ONLY</p>
+      <h1>StoreGrid enquiries</h1>
+      <p>Sign in using the authorised administrator email. We will send a secure one-time sign-in link.</p>
+      <form id="loginForm">
+        <label for="adminEmail">Administrator email</label>
+        <input id="adminEmail" type="email" autocomplete="email" required value="gopalkrishna.sv46@gmail.com">
+        <button type="submit" class="primary">Send secure sign-in link</button>
+      </form>
+      <p id="loginMessage" class="message" role="status"></p>
+    </section>
+
+    <section id="dashboardPanel" hidden>
+      <div class="dashboard-heading"><div><p class="eyebrow">STOREGRID OPERATIONS</p><h1>Enquiry inbox</h1><p id="signedInAs" class="muted"></p></div><button id="signOutButton" class="secondary">Sign out</button></div>
+      <div class="toolbar panel">
+        <input id="searchInput" type="search" placeholder="Search name, phone, email, area…" aria-label="Search enquiries">
+        <select id="statusFilter" aria-label="Filter by status"><option value="all">All statuses</option><option value="new">New</option><option value="contacted">Contacted</option><option value="qualified">Qualified</option><option value="converted">Converted</option><option value="closed">Closed</option></select>
+        <button id="refreshButton" class="secondary">Refresh</button>
+      </div>
+      <p id="dashboardMessage" class="message" role="status"></p>
+      <div class="panel table-panel"><div class="table-scroll"><table><thead><tr><th>Enquiry</th><th>Contact</th><th>Requirement</th><th>Received</th><th>Status</th></tr></thead><tbody id="enquiryRows"><tr><td colspan="5">Loading…</td></tr></tbody></table></div></div>
+      <p class="footnote">Customer information is confidential. Use it only to respond to the enquiry. Records are loaded through an authenticated server API.</p>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
