@@ -1,0 +1,52 @@
+-- StoreGrid enquiry intake rate limiting.
+-- The existing storegrid_enquiries table and its two deny policies remain unchanged.
+
+CREATE TABLE IF NOT EXISTS public.storegrid_rate_limits (
+  key_hash TEXT PRIMARY KEY,
+  window_started_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  request_count INTEGER NOT NULL DEFAULT 0
+);
+
+REVOKE ALL ON TABLE public.storegrid_rate_limits FROM PUBLIC, anon, authenticated;
+
+CREATE OR REPLACE FUNCTION public.storegrid_check_rate_limit(
+  p_key TEXT,
+  p_limit INTEGER DEFAULT 5,
+  p_window_seconds INTEGER DEFAULT 3600
+)
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  current_count INTEGER;
+BEGIN
+  IF p_key IS NULL OR length(p_key) <> 64 OR p_limit < 1 OR p_window_seconds < 1 THEN
+    RETURN FALSE;
+  END IF;
+
+  INSERT INTO public.storegrid_rate_limits (key_hash, window_started_at, request_count)
+  VALUES (p_key, NOW(), 1)
+  ON CONFLICT (key_hash) DO UPDATE
+  SET
+    request_count = CASE
+      WHEN public.storegrid_rate_limits.window_started_at + make_interval(secs => p_window_seconds) <= NOW() THEN 1
+      ELSE public.storegrid_rate_limits.request_count + 1
+    END,
+    window_started_at = CASE
+      WHEN public.storegrid_rate_limits.window_started_at + make_interval(secs => p_window_seconds) <= NOW() THEN NOW()
+      ELSE public.storegrid_rate_limits.window_started_at
+    END
+  RETURNING request_count INTO current_count;
+
+  -- Opportunistic cleanup to keep the small limiter table bounded.
+  DELETE FROM public.storegrid_rate_limits
+  WHERE window_started_at < NOW() - INTERVAL '2 days';
+
+  RETURN current_count <= p_limit;
+END;
+$$;
+
+REVOKE ALL ON FUNCTION public.storegrid_check_rate_limit(TEXT, INTEGER, INTEGER) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.storegrid_check_rate_limit(TEXT, INTEGER, INTEGER) TO service_role;
