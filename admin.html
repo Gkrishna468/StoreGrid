@@ -11,34 +11,39 @@
 <body>
   <main class="shell">
     <header class="topbar"><a class="brand" href="/">store<span>grid</span></a><span>Private enquiry management</span></header>
-    <section id="loginPanel" class="panel login-panel">
-      <p class="eyebrow">AUTHORISED ACCESS ONLY</p>
-      <h1>StoreGrid enquiries</h1>
-     <p>Sign in using your authorised administrator email and password.</p>
-  <label for="adminEmail">Administrator email</label>
-  <input
-    id="adminEmail"
-    type="email"
-    autocomplete="username"
-    required
-    value="gopalkrishna.sv46@gmail.com"
-  >
+    
+<section id="loginPanel" class="panel login-panel">
+  <p class="eyebrow">AUTHORISED ACCESS ONLY</p>
+  <h1>StoreGrid enquiries</h1>
+  <p>Sign in using your authorised administrator email and password.</p>
 
-  <label for="adminPassword">Password</label>
-  <input
-    id="adminPassword"
-    type="password"
-    autocomplete="current-password"
-    placeholder="Enter your admin password"
-    required
-  >
+  <form id="loginForm">
+    <label for="adminEmail">Administrator email</label>
+    <input
+      id="adminEmail"
+      type="email"
+      autocomplete="username"
+      required
+      value="gopalkrishna.sv46@gmail.com"
+    >
 
-  <button type="submit" class="primary" id="loginButton">
-    Sign in securely
-  </button>
-</form>
-      <p id="loginMessage" class="message" role="status"></p>
-    </section>
+    <label for="adminPassword">Password</label>
+    <input
+      id="adminPassword"
+      type="password"
+      autocomplete="current-password"
+      placeholder="Enter your admin password"
+      required
+    >
+
+    <button type="submit" class="primary" id="loginButton">
+      Sign in securely
+    </button>
+  </form>
+
+  <p id="loginMessage" class="message" role="status"></p>
+</section>
+
 
     <section id="dashboardPanel" hidden>
       <div class="dashboard-heading"><div><p class="eyebrow">STOREGRID OPERATIONS</p><h1>Enquiry inbox</h1><p id="signedInAs" class="muted"></p></div><button id="signOutButton" class="secondary">Sign out</button></div>
