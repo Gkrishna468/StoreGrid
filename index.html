@@ -219,7 +219,17 @@
         <div class="form-heading"><strong>Storage enquiry</strong><span>Usually takes less than 2 minutes</span></div>
         <label>Your name<input name="name" required placeholder="Enter your name"></label>
         <div class="form-row">
-          <label>Phone number<input name="phone" required inputmode="tel" pattern="[0-9+() -]{10,16}" placeholder="+91 98765 43210"></label>
+          <label>
+  Phone number
+  <input
+    name="phone"
+    type="tel"
+    required
+    inputmode="tel"
+    pattern="[\d\s\+\(\)\-]{10,20}"
+    placeholder="+91 98765 43210"
+  >
+</label>
           <label>Email (optional)<input name="email" type="email" placeholder="you@example.com"></label>
         </div>
         <label>What would you like to store?
